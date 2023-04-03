@@ -14,13 +14,13 @@ public interface PageCache {
 
     int newPage(byte[] initData);
 
-    Page getPage(int pgno) throws Exception;
+    Page getPage(int pgNo) throws Exception;
 
     void close();
 
     void release(Page page);
 
-    void truncateByBgno(int maxPgno);
+    void truncateByPgNo(int maxPgNo);
 
     int getPageNumber();
 

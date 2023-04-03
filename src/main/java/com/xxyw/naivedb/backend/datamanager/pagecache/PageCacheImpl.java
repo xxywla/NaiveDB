@@ -8,6 +8,7 @@ import com.xxyw.naivedb.common.MyError;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
@@ -44,46 +45,107 @@ public class PageCacheImpl extends AbstractCache<Page> implements PageCache {
 
     @Override
     public int newPage(byte[] initData) {
-        return 0;
+        int pageNo = pageNumbers.incrementAndGet();
+        Page page = new PageImpl(pageNo, initData, null);
+        flush(page);
+        return pageNo;
     }
 
     @Override
-    public Page getPage(int pgno) throws Exception {
-        return null;
+    public Page getPage(int pgNo) throws Exception {
+        return get(pgNo);
     }
 
     @Override
     public void close() {
-
+        super.close();
+        try {
+            fc.close();
+            file.close();
+        } catch (IOException e) {
+            Panic.panic(e);
+        }
     }
 
     @Override
     protected Page getForCache(long key) throws Exception {
-        return null;
+
+        int pgNo = (int) key;
+        long offset = PageCacheImpl.pageOffset(pgNo);
+
+        ByteBuffer buf = ByteBuffer.allocate(PAGE_SIZE);
+
+        fileLock.lock();
+
+        try {
+            fc.position(offset);
+            fc.read(buf);
+        } catch (IOException e) {
+            Panic.panic(e);
+        }
+
+        fileLock.unlock();
+
+        return new PageImpl(pgNo, buf.array(), this);
+    }
+
+    private static long pageOffset(int pgNo) {
+        return (long) (pgNo - 1) * PAGE_SIZE;
     }
 
     @Override
-    protected void releaseForCache(Page obj) {
+    protected void releaseForCache(Page page) {
 
+        if (page.isDirty()) {
+            flush(page);
+            page.setDirty(false);
+        }
+
+    }
+
+    private void flush(Page page) {
+        int pageNo = page.getPageNumber();
+        long offset = pageOffset(pageNo);
+        fileLock.lock();
+        try {
+            ByteBuffer buf = ByteBuffer.wrap(page.getData());
+            fc.position(offset);
+            fc.write(buf);
+            fc.force(false);
+        } catch (IOException e) {
+            Panic.panic(e);
+        } finally {
+            fileLock.unlock();
+        }
     }
 
     @Override
     public void release(Page page) {
-
+        release(page.getPageNumber());
     }
 
     @Override
-    public void truncateByBgno(int maxPgno) {
+    public void truncateByPgNo(int maxPgNo) {
+
+        long size = pageOffset(maxPgNo + 1);
+
+        try {
+            file.setLength(size);
+        } catch (IOException e) {
+            Panic.panic(e);
+        }
+
+        pageNumbers.set(maxPgNo);
 
     }
 
     @Override
     public int getPageNumber() {
-        return 0;
+        return pageNumbers.intValue();
     }
 
     @Override
     public void flushPage(Page pg) {
-
+        flush(pg);
     }
 }

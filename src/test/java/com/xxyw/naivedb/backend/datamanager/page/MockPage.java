@@ -1,26 +1,19 @@
 package com.xxyw.naivedb.backend.datamanager.page;
 
-
-import com.xxyw.naivedb.backend.datamanager.pagecache.PageCache;
-
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class PageImpl implements Page {
+public class MockPage implements Page {
 
-    private int pageNumber;
+    private int pageNo;
     private byte[] data;
-    private boolean dirty;
-    private Lock lock;
+    private Lock lock = new ReentrantLock();
 
-    private PageCache pageCache;
-
-    public PageImpl(int pageNumber, byte[] data, PageCache pageCache) {
-        this.pageNumber = pageNumber;
-        this.data = data;
-        this.pageCache = pageCache;
-
-        lock = new ReentrantLock();
+    public static MockPage newMockPage(int pageNo, byte[] data) {
+        MockPage mockPage = new MockPage();
+        mockPage.pageNo = pageNo;
+        mockPage.data = data;
+        return mockPage;
     }
 
     @Override
@@ -35,22 +28,22 @@ public class PageImpl implements Page {
 
     @Override
     public void release() {
-        pageCache.release(this);
+
     }
 
     @Override
     public void setDirty(boolean dirty) {
-        this.dirty = dirty;
+
     }
 
     @Override
     public boolean isDirty() {
-        return dirty;
+        return false;
     }
 
     @Override
     public int getPageNumber() {
-        return pageNumber;
+        return pageNo;
     }
 
     @Override
