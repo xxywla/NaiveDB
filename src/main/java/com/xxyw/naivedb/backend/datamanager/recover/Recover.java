@@ -1,5 +1,7 @@
 package com.xxyw.naivedb.backend.datamanager.recover;
 
+import com.google.common.primitives.Bytes;
+import com.xxyw.naivedb.backend.common.SubArray;
 import com.xxyw.naivedb.backend.datamanager.dataitem.DataItem;
 import com.xxyw.naivedb.backend.datamanager.logger.Logger;
 import com.xxyw.naivedb.backend.datamanager.page.Page;
@@ -228,6 +230,24 @@ public class Recover {
         } finally {
             page.release();
         }
+    }
+
+    public static byte[] updateLog(long xid, DataItem di) {
+        byte[] logType = {LOG_TYPE_UPDATE};
+        byte[] xidRaw = Parser.long2Byte(xid);
+        byte[] uidRaw = Parser.long2Byte(di.getUid());
+        byte[] oldRaw = di.getOldRaw();
+        SubArray raw = di.getRaw();
+        byte[] newRaw = Arrays.copyOfRange(raw.raw, raw.start, raw.end);
+        return Bytes.concat(logType, xidRaw, uidRaw, oldRaw, newRaw);
+    }
+
+    public static byte[] insertLog(long xid, Page pg, byte[] raw) {
+        byte[] logTypeRaw = {LOG_TYPE_INSERT};
+        byte[] xidRaw = Parser.long2Byte(xid);
+        byte[] pgnoRaw = Parser.int2Byte(pg.getPageNumber());
+        byte[] offsetRaw = Parser.short2Byte(PageX.getFSO(pg));
+        return Bytes.concat(logTypeRaw, xidRaw, pgnoRaw, offsetRaw, raw);
     }
 
 }

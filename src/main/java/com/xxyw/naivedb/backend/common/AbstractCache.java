@@ -3,6 +3,7 @@ package com.xxyw.naivedb.backend.common;
 import com.xxyw.naivedb.common.MyError;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -105,7 +106,8 @@ public abstract class AbstractCache<T> {
     protected void close() {
         lock.lock();
         try {
-            Set<Long> keys = cache.keySet();
+            Set<Long> keys = new HashSet<>(cache.keySet());
+
             for (long key : keys) {
                 T obj = cache.get(key);
                 releaseForCache(obj);

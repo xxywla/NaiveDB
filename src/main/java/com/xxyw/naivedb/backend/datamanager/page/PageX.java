@@ -67,4 +67,10 @@ public class PageX {
                 raw.length);
     }
 
+    public static byte[] initRaw() {
+        byte[] raw = new byte[PageCache.PAGE_SIZE];
+        setFSO(raw, OF_DATA);
+        return raw;
+    }
+
 }

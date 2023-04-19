@@ -1,7 +1,6 @@
 package com.xxyw.naivedb.backend.datamanager.logger;
 
 import com.google.common.primitives.Bytes;
-import com.xxyw.naivedb.backend.datamanager.pagecache.PageCache;
 import com.xxyw.naivedb.backend.utils.Panic;
 import com.xxyw.naivedb.backend.utils.Parser;
 import com.xxyw.naivedb.common.MyError;
@@ -11,7 +10,6 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
-import java.util.Random;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -108,6 +106,7 @@ public class LoggerImpl implements Logger {
             return null;
         }
 
+        System.out.println("109  size = " + size);
         ByteBuffer buf = ByteBuffer.allocate(OF_DATA + size);
         try {
             fc.position(position);
