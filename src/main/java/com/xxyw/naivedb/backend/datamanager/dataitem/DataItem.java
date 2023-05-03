@@ -9,6 +9,13 @@ import com.xxyw.naivedb.backend.utils.Types;
 
 import java.util.Arrays;
 
+/*
+在上层模块试图对 DataItem 进行修改时，需要遵循一定的流程
+在修改之前需要调用 before() 方法
+想要撤销修改时，调用 unBefore() 方法
+在修改完成后，调用 after() 方法
+整个流程，主要是为了保存前相数据，并及时落日志。
+ */
 public interface DataItem {
     SubArray data();
 
