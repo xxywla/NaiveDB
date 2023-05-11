@@ -68,6 +68,10 @@ public class Booter {
         return buf;
     }
 
+    /*
+    首先将内容写入一个 bt_tmp 文件中，随后将这个文件重命名为 bt 文件。
+    通过操作系统重命名文件的原子性，来保证操作的原子性。
+     */
     public void update(byte[] data) {
         File tmp = new File(path + BOOTER_TMP_SUFFIX);
         try {

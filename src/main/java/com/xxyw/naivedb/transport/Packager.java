@@ -4,6 +4,10 @@ package com.xxyw.naivedb.transport;
  * @author Youjing Ju
  * @create 2023-05-09 19:44
  */
+
+/*
+Encoder 和 Transporter 的结合体，直接对外提供 send 和 receive 方法
+ */
 public class Packager {
     private Transporter transpoter;
     private Encoder encoder;

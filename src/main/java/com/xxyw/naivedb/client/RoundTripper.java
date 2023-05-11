@@ -8,6 +8,10 @@ import com.xxyw.naivedb.transport.Package;
  * @author Youjing Ju
  * @create 2023-05-09 19:42
  */
+
+/*
+实现了单次收发动作
+ */
 public class RoundTripper {
     private Packager packager;
 

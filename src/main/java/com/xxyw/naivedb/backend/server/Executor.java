@@ -10,6 +10,11 @@ import com.xxyw.naivedb.common.MyError;
  * @author Youjing Ju
  * @create 2023-05-09 19:40
  */
+
+/*
+Executor 调用 Parser 获取到对应语句的结构化信息对象，
+并根据对象的类型，调用 TBM 的不同方法进行处理。
+ */
 public class Executor {
     private long xid;
     TableManager tbm;

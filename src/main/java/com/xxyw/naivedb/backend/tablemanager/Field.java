@@ -87,6 +87,7 @@ public class Field {
         return f;
     }
 
+    // 创建一个字段 将相关的信息通过 VM 持久化
     private void persistSelf(long xid) throws Exception {
         byte[] nameRaw = Parser.string2Byte(fieldName);
         byte[] typeRaw = Parser.string2Byte(fieldType);
